@@ -1,0 +1,2 @@
+MainPackage=D:\Projects\VS\Eredmenyek\Eredmenyek\bin\ARM\Debug\Eredmenyek_1.0.0.0_ARM_Debug.appx
+SymbolPackage=D:\Projects\VS\Eredmenyek\Eredmenyek\AppPackages\Eredmenyek_1.0.0.0_Debug_Test\Eredmenyek_1.0.0.0_ARM_Debug.appxsym

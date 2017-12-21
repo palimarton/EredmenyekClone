@@ -1,0 +1,252 @@
+﻿<Page
+    x:Class="Eredmenyek.Views.TournamentPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uc="using:Eredmenyek.Views.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:services="using:Eredmenyek.Services.ViewServices"
+    xmlns:helpers="using:Eredmenyek.Services.Helpers"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <CollectionViewSource x:Key="LeagueTable" Source="{x:Bind ViewModel.StandingsViewList}" />
+        <CollectionViewSource x:Key="TopScorers" Source="{x:Bind ViewModel.TopScorers}" />
+        <CollectionViewSource x:Key="Results" Source="{x:Bind ViewModel.ResultList, Mode=OneWay}" />
+        <CollectionViewSource x:Key="Fixtures" Source="{x:Bind ViewModel.FixtureList, Mode=OneWay}" />
+        <CollectionViewSource x:Key="LiveMatches" Source="{x:Bind ViewModel.LiveMatchList, Mode=OneWay}" />
+
+        <services:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="ms-appx:///Assets/stadion.jpg" Opacity="0.7" />
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState  x:Name="Mobile">
+                    <VisualState.StateTriggers>
+                        <helpers:DeviceStateTrigger DeviceFamily="{StaticResource Mobile}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="tournamentNameTextBlock.FontSize" Value="{StaticResource HeaderTextSizeMobile}" />
+                        <Setter Target="leagueTableScrollViewer.FontSize" Value="{StaticResource RegularTextSizeMobile}" />
+                        <Setter Target="matchesScrollViewver.Margin" Value="0,0" />
+                        <Setter Target="leagueTableScrollViewer.Margin" Value="0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState  x:Name="Desktop">
+                    <VisualState.StateTriggers>
+                        <helpers:DeviceStateTrigger DeviceFamily="{StaticResource Desktop}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="tournamentNameTextBlock.FontSize" Value="{StaticResource HeaderTextSizeDesktop}" />
+                        <Setter Target="leagueTableScrollViewer.FontSize" Value="{StaticResource RegularTextSizeDesktop}" />
+                        <Setter Target="matchesScrollViewver.Margin" Value="20,20" />
+                        <Setter Target="leagueTableScrollViewer.Margin" Value="20,20" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <controls:PageHeader x:Name="pageHeader" Content="Tournament Page" Frame="{x:Bind Frame}" />
+
+        <TextBlock Text="{x:Bind ViewModel.TournamentName}" x:Name="tournamentNameTextBlock"
+                   FontSize="50" Grid.Row="1" HorizontalAlignment="Center" />
+
+        <Pivot Grid.Row="3" HorizontalAlignment="Center">
+            <PivotItem Header="Matches">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="matchesScrollViewver" FontSize="20">
+                    <StackPanel Orientation="Vertical">
+                        <DatePicker HorizontalAlignment="Center" Opacity="0.8" DateChanged="{x:Bind ViewModel.MatchDateChanged}"/>
+
+                        <ListView ItemsSource="{Binding Source={StaticResource Results}}"
+                              ItemClick="{x:Bind ViewModel.GotoMatchPage}" IsItemClickEnabled="True"
+                              Visibility="{x:Bind ViewModel.HasResult, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <ListView.Header>
+                                <TextBlock Text="Results" FontSize="20" FontWeight="Bold" Padding="10,10"/>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <uc:DailyResultViewUserControl />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+
+                        <ListView ItemsSource="{Binding Source={StaticResource LiveMatches}}"
+                              ItemClick="{x:Bind ViewModel.GotoMatchPage}" IsItemClickEnabled="True"
+                              Visibility="{x:Bind ViewModel.HasLiveMatch, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <ListView.Header>
+                                <TextBlock Text="Live Matches" FontSize="20" FontWeight="Bold" Padding="10,10"/>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <uc:DailyLiveViewUserControl />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+
+                        <ListView ItemsSource="{Binding Source={StaticResource Fixtures}}"
+                              ItemClick="{x:Bind ViewModel.GotoMatchPage}" IsItemClickEnabled="True"
+                              Visibility="{x:Bind ViewModel.HasFixture, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <ListView.Header>
+                                <TextBlock Text="Upcoming Fixtures" FontSize="20" FontWeight="Bold" Padding="10,10"/>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <uc:DailyFixtureViewUserControl />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                    </StackPanel>
+                </ScrollViewer>                
+            </PivotItem>
+            <PivotItem Header="League Table">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="leagueTableScrollViewer">
+                    <ListView ItemsSource="{Binding Source={StaticResource LeagueTable}}"
+                          HorizontalAlignment="Stretch" BorderBrush="Gray" BorderThickness="1"
+                          Name="LeagueTable" IsItemClickEnabled="True" FontSize="10"
+                          ItemClick="{x:Bind ViewModel.OnLeagueTableItemClicked}">
+                        <ListView.Background>
+                            <SolidColorBrush Color="White" Opacity="0.5" />
+                        </ListView.Background>
+                        <ListView.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="6*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.Background>
+                                    <SolidColorBrush Color="LightGray" Opacity="0.2" />
+                                </Grid.Background>
+
+                                <TextBlock Grid.Column="0" Text="#   " HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="TEAM" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="MP  " HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Text="W   " HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Text="D   " HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="5" Text="L   " HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="6" Text="GS  " HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="7" Text="P   " HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            </Grid>
+                        </ListView.Header>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="6*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" HorizontalAlignment="Stretch" TextAlignment="Center">
+                                        <Run Text="{Binding Rank}" />
+                                        <Run Text="." />
+                                    </TextBlock>
+                                    <TextBlock Grid.Column="1" Text="{Binding TeamName}"      HorizontalAlignment="Stretch" TextAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding MatchesPlayed}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Wins}"          HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding Draws}"         HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="5" Text="{Binding Losses}"        HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="7" Text="{Binding Points}"        HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="6"                                HorizontalAlignment="Stretch" TextAlignment="Center">
+                                        <Run Text="{Binding GoalsFor}" />
+                                        <Run Text="/" />
+                                        <Run Text="{Binding GoalsAgainst}" />
+                                    </TextBlock>
+                                    
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </ScrollViewer>                
+            </PivotItem>
+            <PivotItem Header="Top Scorers">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="20,20">
+                    <ListView ItemsSource="{Binding Source={StaticResource TopScorers}}" 
+                          HorizontalAlignment="Center" >
+                        <ListView.Background>
+                            <SolidColorBrush Color="White" Opacity="0.5" />
+                        </ListView.Background>
+                        <ListView.Header>
+                            <Grid Background="LightGray">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="6*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="#"         FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="Player"    FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center" />
+                                <TextBlock Grid.Column="2" Text="GS"        FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center" />
+                            </Grid>
+                        </ListView.Header>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="6*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock xml:space="preserve" Grid.Column="0" FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center">
+                                        <Run Text="{Binding Rank}" /><Run Text="." />
+                                    </TextBlock>
+                                    <TextBlock Grid.Column="1" Text="{Binding PlayerName}"  FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Goals}"       FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </ScrollViewer>                
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</Page>

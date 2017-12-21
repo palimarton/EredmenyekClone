@@ -1,0 +1,85 @@
+<Page x:Class="Eredmenyek.Views.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:Behaviors="using:Template10.Behaviors"
+      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+      xmlns:controls="using:Template10.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Eredmenyek.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:vm="using:Eredmenyek.ViewModels"
+      xmlns:services="using:Eredmenyek.Services.ViewServices"
+      mc:Ignorable="d">
+    
+    <Page.Resources>
+        <CollectionViewSource x:Key="FavouriteTeams" Source="{x:Bind ViewModel.TeamNames, Mode=OneWay}" />
+        <services:BoolToInvisibilityConverter x:Key="BoolToInvisibilityConverter" />
+        <services:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="ms-appx:///Assets/stadion.jpg" Opacity="0.7" />
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="EredmenyekMarci" />
+
+        <StackPanel Grid.Row="1" Padding="20" Margin="20" VerticalAlignment="Top"
+                    Visibility="{x:Bind ViewModel.LoggedIn, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel.Background>
+                <SolidColorBrush Color="LightGray" Opacity="0.6" />
+            </StackPanel.Background>
+            <StackPanel HorizontalAlignment="Stretch"
+                        Visibility="{x:Bind ViewModel.HasFavouriteTeam, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+                <TextBlock Text="Favourite Teams" FontSize="30"  />
+                <ListView ItemsSource="{Binding Source={StaticResource FavouriteTeams}}" 
+                      ItemClick="{x:Bind ViewModel.FavouriteTeamTapped}" IsItemClickEnabled="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" FontSize="20" Margin="20"  />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center" Padding="0,0,0,20"
+                        Visibility="{x:Bind ViewModel.HasFavouriteTeam, Converter={StaticResource BoolToInvisibilityConverter}, Mode=OneWay}">
+                <TextBlock FontSize="20"  TextAlignment="Center" LineHeight="30" TextWrapping="WrapWholeWords" FontStyle="Italic" Margin="20">
+                    <Bold><Run>You do not have any Favourite Teams yet</Run></Bold>
+                    <LineBreak /><LineBreak />
+                    <Run>You can add by selecting a team on the league table or on the match view and clicking the star icon in the top right corner</Run>
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <SymbolIcon Symbol="Favorite" RenderTransformOrigin="0.5,0.5" Margin="20,0">
+                        <SymbolIcon.RenderTransform>
+                            <CompositeTransform ScaleX="2" ScaleY="2"/>
+                        </SymbolIcon.RenderTransform>
+                        <SymbolIcon.Foreground>
+                            <SolidColorBrush Color="Goldenrod" />
+                        </SymbolIcon.Foreground>
+                    </SymbolIcon>
+                    <SymbolIcon Symbol="Favorite" RenderTransformOrigin="0.5,0.5" Margin="20,0">
+                        <SymbolIcon.RenderTransform>
+                            <CompositeTransform ScaleX="2" ScaleY="2"/>
+                        </SymbolIcon.RenderTransform>
+                        <SymbolIcon.Foreground>
+                            <SolidColorBrush Color="Black" />
+                        </SymbolIcon.Foreground>
+                    </SymbolIcon>
+                </StackPanel>                
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="50" VerticalAlignment="Top" HorizontalAlignment="Center" 
+                    Visibility="{x:Bind ViewModel.LoggedIn, Converter={StaticResource BoolToInvisibilityConverter}, Mode=OneWay}">
+            <TextBlock FontSize="20"  TextAlignment="Center" LineHeight="30" TextWrapping="Wrap" FontStyle="Italic" Margin="20">
+                <Bold><Run>You are not logged in into OneDrive</Run></Bold>
+                <LineBreak /><LineBreak />
+                <Run>To access the favourite team feature, please log in by clicking the Log In button!</Run>
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+</Page>
+

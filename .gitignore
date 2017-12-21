@@ -1,0 +1,24 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Eredmenyek/v14
+/Common/obj/x86/Debug
+/Common/bin/x86/Debug
+/NotificationHelper/bin/x86/Debug
+/NotificationHelper/obj/x86/Debug
+/Common.Services/obj/x86/Debug
+/Common.Services/bin/x86/Debug
+/.vs/config
+*.suo
+/Microsoft.Toolkit.Uwp.Services/bin/x86/Debug
+/Microsoft.Toolkit.Uwp.Services/obj/x86/Debug
+/Common.Services/Backup
+/Common.Services/obj
+/Microsoft.Toolkit.Uwp.Services/Backup
+/Microsoft.Toolkit.Uwp.Services/obj
+/NotificationHelper/Backup
+/NotificationHelper/obj
+/Common/Backup
+/Common/obj
+/.vs
